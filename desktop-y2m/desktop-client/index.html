@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Y2M</title>
+        <script>
+            const fs = require('fs');
+            const axios = require('axios');
+            axios.defaults.adapter = require('axios/lib/adapters/http');
+            var library = require(__dirname + '\\library\\lib.json');
+        </script>
+        <script src="src/FileOps.js"></script>
+        <script src="src/UserInterface.js"></script>
+        <script src="src/YouTubeApi.js"></script>
+        <script src="src/Decoder.js"></script>
+        <script src="src/AudioQueue.js"></script>
+        <script src="src/AudioManager.js"></script>
+        <script>
+            var audio;
+            var song = null;
+            var repeat = false;
+            var shuffle = false;
+            var shuffle_queue = null;
+            var shuffle_index = -1;
+            var seeker;
+            var volume;
+            var search;
+
+            document.addEventListener('DOMContentLoaded', function(){
+                audio = document.getElementById("audio-player");
+                seeker = document.getElementById("seeker");
+                volume = document.getElementById("volume");
+                search = document.getElementById("search");
+                add_event_handlers();
+            });
+        </script>
+        <link rel="stylesheet" href="css/style.css">
+    </head>
+    <body>
+        <audio id="audio-player"></audio>
+        <div id="menu-navigator">
+            <div id="main-menu">
+                <label id="search-menu" name="search" class="menu-options font" onclick="set_context(this)">Search</label>
+                <label id="liked-songs" name="playlist" class="menu-options font" onclick="set_context(this);">Liked Songs</label>
+                <label id="create" class="menu-options font" onclick="show_playlist_builder();">Create Playlist</label>
+            </div>
+            <div id="divider"></div>
+            <div id="playlist-container">
+            </div>
+            <img id="currently-playing-thumb" style="visibility:hidden" src="">
+        </div>
+        <div id="media-controller-container">
+            <label id="currently-playing" class="font" style="color:#bb86fc"></label>
+            <div id="vol-container">
+                <button id="q" class="icon cont" onclick="build_queue_switch=!build_queue_switch;build_queue(build_queue_switch);"></button>
+                <button id="vol-indicator" class="icon cont"></button>
+                <input id="volume" class="controller" type="range" min="0" max="100" value="100">
+            </div>
+            <div id="media-controller" style="position: absolute;top:10px;left:25%;text-align:center;">
+                <button id="shuffle" class="icon cont" style="font-size:x-large" onclick="set_shuffle();this.style.color=shuffle?'#bb86fc':'#cfcfcf';""></button>
+                <button id="previous" class="icon cont" style="font-size:x-large" onclick="prev();"></button>
+                <button id="play" class="icon cont" style="font-size:2em" onclick="pause();"></button>
+                <button id="skip" class="icon cont" style="font-size:x-large" onclick="next();"></button>
+                <button id="repeat" class="icon cont" style="font-size:x-large;" onclick="repeat=!repeat;this.style.color=repeat?'#bb86fc':'#cfcfcf';"></button>
+                <div style="width:100%">
+                    <label id="time-current" class="font time">00:00</label>
+                    <input id="seeker" class="controller" type="range" min="1" max="1000" value="1">
+                    <label id="time-length" class="font time">00:00</label>
+                </div>
+            </div>
+        </div>
+        <div id="media-navigator">
+            <div id="search-main">
+                <input id="search" type="text" placeholder="Search Songs, Artists, or Youtube URL">
+                <h1 class="search-title font" style="font-size: large;">Songs</h1>
+                <table id="search-songs" class="search-title" style="width:97%;table-layout:fixed;" cellspacing="0">
+                    <tr class="song-tr play-row" style="width:100">
+                        <th><button class="icon" onclick="play_from_row(document.getElementById('search-songs').rows[0]);"></button></th>
+                        <th style="width:5%;"><img id="i-s0" class="thumb"></img></th>
+                        <th><label id="l-s0" class="font" style="margin-left:50px;overflow:hidden;width:50%"></label></th>
+                        <th><button class="icon" onclick="like('s0?t=liked-songs')"></button></th>
+                        <th><button id="ot0" class="ot icon" onclick="options(this)"></button></th> <!--Options=Add to playlist, enqueue, download-->
+                    </tr>
+                    <tr class="song-tr play-row">
+                        <th><button class="icon" onclick="play_from_row(document.getElementById('search-songs').rows[1]);"></button></th>
+                        <th><img id="i-s1" class="thumb"></img></th>
+                        <th><label id="l-s1"  class="font" style="margin-left:50px"></label></th>
+                        <th><button class="icon" onclick="like('s1?t=liked-songs')"></button></th>
+                        <th><button id="ot1" class="ot icon" onclick="options(this)"></button></th>
+                    </tr>
+                    <tr class="song-tr play-row">
+                        <th><button class="icon" onclick="play_from_row(document.getElementById('search-songs').rows[2]);"></button></th>
+                        <th><img id="i-s2" class="thumb"></img></th>
+                        <th><label id="l-s2"  class="font" style="margin-left:50px"></label></th>
+                        <th><button class="icon" onclick="like('s2?t=liked-songs')"></button></th>
+                        <th><button id="ot2" class="ot icon" onclick="options(this)"></button></th>
+                    </tr>
+                    <tr class="song-tr play-row">
+                        <th><button class="icon" onclick="play_from_row(document.getElementById('search-songs').rows[3]);"></button></th>
+                        <th><img id="i-s3" class="thumb"></img></th>
+                        <th><label id="l-s3"  class="font" style="margin-left:50px"></label></th>
+                        <th><button class="icon" onclick="like('s3?t=liked-songs')"></button></th>
+                        <th><button id="ot3" class="ot icon" onclick="options(this)"></button></th>
+                    </tr>
+                    <tr class="song-tr play-row">
+                        <th><button class="icon" onclick="play_from_row(document.getElementById('search-songs').rows[4]);"></button></th>
+                        <th><img id="i-s4" class="thumb"></img></th>
+                        <th><label id="l-s4"  class="font" style="margin-left:50px"></label></th>
+                        <th><button class="icon" onclick="like('s4?t=liked-songs')"></button></th>
+                        <th><button id="ot4" class="ot icon" onclick="options(this)"></button></th>
+                    </tr>
+                </table>
+                <h1 class="search-title font" style="font-size: large;">Arists</h1>
+                <table id="search-artists" class="search-title" style="margin-top: 0;padding-top: 0;">
+                    <tr>
+                        <th class="art"><figure><img id="i-a0" class="a-thumb"/><figcaption id="l-a0" class="font" style="text-align:center"></figcaption></figure></th>
+                        <th class="art"><figure><img id="i-a1" class="a-thumb"/><figcaption id="l-a1" class="font" style="text-align:center"></figcaption></figure></th>
+                        <th class="art"><figure><img id="i-a2" class="a-thumb"/><figcaption id="l-a2" class="font" style="text-align:center"></figcaption></figure></th>
+                        <th class="art"><figure><img id="i-a3" class="a-thumb"/><figcaption id="l-a3" class="font" style="text-align:center"></figcaption></figure></th>
+                        <th class="art"><figure><img id="i-a4" class="a-thumb"/><figcaption id="l-a4" class="font" style="text-align:center"></figcaption></figure></th>
+                    </tr>
+                </table>
+            </div>
+            <div id="playlist-main">
+                <input type="text" id="playlist-title" class="font" style="margin-top:3%;margin-left:3%;font-size: xx-large;" readonly/>
+                <button id="start-playlist" class="icon cont" style="margin-left:3%;display:inline-block;font-size:x-large;"
+                    onclick="play_from_row(document.getElementById('playlist-table').rows[0])"></button>
+                <button id="edit-playlist" class="icon cont" style="margin-left:1%;font:x-large;" 
+                    onclick="focus_title();"></button>
+                <button id="delete-playlist" class="icon cont" style="margin-left:1%;font-size:x-large;" onclick="confirm_delete(this);">
+                    </button>
+                <div id="p-inner" style="width:100%;height:80%;overflow-y:scroll;">
+                    <table id="playlist-table" style="width:100%" cellspacing="0"></table>
+                </div>
+            </div>
+            <div id="queue-main">
+                <button id="back-queue" onclick="build_queue(false);" class="icon cont" ></button>
+                <h1 class="font" style="display:inline-block;font-size:xx-large;margin-left:1%;;margin-top:3%">Queue</h1>
+                <div id="q-inner" style="width:100%;height:85%;overflow-y:scroll;">
+                    <h2 class="font queue-header">Next in queue</h2>
+                    <table id="priority-table" class="queue-table"></table>
+                    <h2 id="context-queue" class="font queue-header">Next from {Context}</h2>
+                    <table id="context-queue-table" class="queue-table"></table>
+                </div>
+            </div>
+        </div>
+        <div id="options-menu">
+            <div style="height:5px;"></div>
+            <label class="font option" onclick="add_to_priority(this.getAttribute('name'));">Add to Queue</label>
+            <label class="font option" onclick="remove_queue(this.getAttribute('name'));">Remove from Queue</label>
+            <label class="font option" onclick="show_playlist_options(this.getAttribute('name'));">Add to Playlist</label>
+            <label class="font option" onclick="remove_from_playlist(this.getAttribute('name'));">Remove from Playlist</label>
+            <label class="font option" onclick="download_from_id(this.getAttribute('name'));">Download</label>
+            <div style="height:5px;"></div>
+        </div>
+        <div id="playlist-selector-container" class="confirmation-menu">
+            <select id="playlist-selector">
+            </select>
+            <button class="playlist-button" onclick=" document.getElementById('playlist-selector-container').style.visibility = 'hidden'">
+                Cancel
+            </button>
+            <button id="playlist-submit" class="playlist-button" style="color:#1ED761;border: 1px solid #1ED761" onclick="add_to_playlist(this.getAttribute('name')); 
+                document.getElementById('playlist-selector-container').style.visibility = 'hidden'">
+                Confirm
+            </button>
+        </div>
+        <div id="create-playlist">
+            <input type="text" id="create-playlist-name" class="font" placeholder="Playlist Name"/>
+            <button id="submit-playlist-create" class="font" onclick="create_playlist();">Create</button>
+        </div>
+        <div id="confirm-delete" class="confirmation-menu">
+            <label id="delete-label" class="font" style="display:block;margin-left:10%;font-size:x-large;margin-top:10%;height:30%;">
+                Delete Playlist playlist?</label>
+            <button class="playlist-button" onclick="confirm_delete();">Cancel</button>
+            <button class="playlist-button" style="color:#1ED761;border: 1px solid #1ED761" onclick="confirm_delete();delete_playlist();">Confirm</button>
+        </div>
+        <h1 id="header" class="font">Y2<span style="color:#bb86fc">M</span></h1>
+    </body>
+</html>

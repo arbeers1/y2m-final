@@ -1,0 +1,394 @@
+html, body{
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    background-color: #1d1d1d;
+}
+
+@font-face {
+    font-family: holo;
+    src: url(../font/holomdl2.ttf);
+}
+
+.icon{
+    font-family: holo;
+    color: white;
+    background-color: transparent;
+    outline: 0;
+    border: 0;
+    font-size: large;
+}
+
+.icon:hover{
+    cursor: pointer;
+    filter: brightness(1.2);
+}
+
+.cont{
+    color: #cfcfcf;
+}
+
+.font{
+    font-size: medium;
+    color: white;
+    font-family: sans-serif;
+    overflow: none;
+}
+
+.menu-options{
+    display: block;
+    width: 80%;
+    margin-left: 10%;
+    margin-top: 5%;
+    font-size: large;
+    font-weight: bold;
+    color: #e2e2e2;
+}
+
+.menu-options:hover{
+    cursor: pointer;
+    filter: brightness(1.2);
+}
+
+.controller{
+    display: inline-block;
+}
+
+.search-title{
+    display: block;
+    margin-top: 3%;
+    margin-left: 3%;
+    visibility: hidden;
+}
+
+.song-tr{
+    max-height: 10%;
+    visibility: hidden;
+}
+
+.thumb{
+    width: 90px;
+    height: 60px;
+}
+
+.a-thumb{
+    background-size: cover;
+    margin-top: 0;
+    padding-top: 0;
+    max-height: 7%;
+    border-radius: 30px;
+}
+
+.art{
+    margin-top: 0;
+    padding-top: 0;
+}
+
+.play-row{
+    width: 100%;
+}
+
+.play-row:hover{
+    background-color: #121212;
+}
+
+.option{
+    display: block;
+    width: 100%;
+    height: 30%;
+    white-space: nowrap;
+    overflow-x: hidden;
+    text-indent: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.option:hover{
+    background-color: #3f3f3f;
+}
+
+.playlist-button{
+    background-color: #121212;
+    width: 35%;
+    height: 20%;
+    margin-left: 10%;
+    margin-top: 10%;
+    border: 1px solid white;
+    color: white;
+    border-radius: 5px;
+}
+
+.playlist-button:hover{
+    background-color: #3f3f3f;
+}
+
+.time{
+    width: 10%;
+    color: #cfcfcf;
+    overflow-x: none;
+}
+
+.confirmation-menu{
+    width: 20%;
+    height: 20%;
+    position: fixed;
+    top: 30%;
+    left: 40%;
+    background-color: #0e0e0e;
+    border-radius: 10px;
+    visibility: hidden;
+}
+
+.queue-header{
+    margin-left:1%;
+    color: #cfcfcf;
+}
+
+.queue-table{
+    margin-left: 1%;
+    table-layout: fixed;
+
+}
+
+#header{
+    position: fixed;
+    font-size: 3em;
+    right: 20px;
+}
+
+#menu-navigator {
+    resize: both;
+    width: 13%;
+    height: 90%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #121212;
+}
+
+#create{
+    margin-top: 15%;
+}
+
+#divider{
+    width: 90%;
+    height: 1px;
+    background-color: #6a6a6a;
+    margin-top: 5%;
+    margin-left: 5%;
+    margin-bottom: 10%;
+}
+
+#playlist-container{
+    width: 100%;
+    height: 80%;
+    overflow-y: scroll;
+}
+
+#media-navigator {
+    position: fixed;
+    right: 0;
+    top: 0;
+}
+
+#search-main{
+    width: 100%;
+    height: 100%;
+    background-color: #1d1d1d;
+    text-align: left;
+    visibility: visible;
+}
+
+#playlist-main{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    right: 0;
+    top: 0;
+    visibility: hidden;
+}
+
+#queue-main{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    right: 0;
+    top: 0;
+    visibility: hidden;
+}
+
+#search{
+    width: 50%;
+    margin-left: 25%;
+    margin-top: 2%;
+    height: 5%;
+    border-radius: 50px;
+    text-indent: 20px;
+    font-size: large;
+    outline: none;
+}
+
+::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+    font-size: large;
+    text-indent: 20px;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+#media-controller-container{
+    width: 100%;
+    height: 10%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    background-color: #0e0e0e;
+}
+
+#media-controller{
+    height: 100%;
+    width: 50%;
+    margin: auto;
+}
+
+#currently-playing{
+    width: 25%;
+    position: absolute;
+    left: 1%;
+    top: 30%;
+    overflow: hidden;
+}
+
+#currently-playing-thumb{
+    position: absolute;
+    width: 100%;
+    height: 20%;
+    bottom: 0;
+}
+
+#seeker{
+    width: 80%;
+    outline: none;
+    accent-color: darkgrey;
+}
+
+#seeker:hover{
+    cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    visibility: hidden;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+    visibility: visible;
+}
+
+#vol-container{
+    width: 18%;
+    position: absolute;
+    right: 3%;
+    top: 30%;
+}
+
+#volume{
+    accent-color: darkgrey;
+    width: 70%;
+    outline: none;
+}
+
+#playlist-table{
+    margin-top: 3%;
+    margin-left: 3%;
+    table-layout: fixed;
+}
+
+#options-menu{
+    visibility: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #0e0e0e;
+    width: 15%;
+    border-radius: 5px;
+}
+
+#playlist-selector{
+    width: 80%;
+    height: 30%;
+    margin-left: 10%;
+    margin-top: 10%;
+    background-color: #1d1d1d;
+    color: white;
+    outline: none;
+}
+
+#create-playlist{
+    width: 30%;
+    height: 20%;
+    position: fixed;
+    top: 30%;
+    left: 35%;
+    background-color: #0e0e0e;
+    border-radius: 15px;
+    visibility:hidden;
+}
+
+#create-playlist-name{
+    display: block;
+    width: 80%;
+    height: 40%;
+    margin-left: 10%;
+    background-color: #1d1d1d;
+    border: 0;
+    border-radius: 10px;
+    outline: none;
+    margin-top: 3%;
+    text-indent: 20px;
+    font-size: x-large;
+}
+
+#playlist-title{
+    background-color: transparent;
+    border:none;
+    outline: none;
+    display: block;
+    margin-bottom: 1%;
+    font-weight: bold;
+}
+
+#submit-playlist-create{
+    width: 30%;
+    height: 20%;
+    margin-left: 60%;
+    border-radius: 10px;
+    background-color: transparent;
+    border: 1px solid white;
+    margin-top: 5%;
+    font-size: x-large;
+}
+
+#submit-playlist-create:hover{
+    color: #bb86fc;
+    border: 1px solid #bb86fc;
+    cursor: pointer;
+}
+
+#play:hover{
+    -webkit-transform: scale(1.1);
+}
+
+#back-queue{
+    display:inline-block;
+    margin-left:1%;
+    margin-top:2%;
+    border-radius: 50%;
+    width: 3%;
+    height: 5%;
+    background-color: black;
+    border: none;
+}
+
